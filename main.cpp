@@ -46,10 +46,34 @@ void retracePath(routeNode* start, routeNode* target){
 void pathFinding(routeNode *start, routeNode *target){
     closedList = linkedList();
     openList = linkedList();
+    routeList = linkedList();
+
+    closedList.reset();
+    openList.reset();
+    routeList.reset();
+
+    for (int y = 0; y < mapY; y++) {
+        for (int x = 0; x < mapX; x++) {
+            map[x][y]->next = NULL;
+            map[x][y]->type=0;
+
+        }
+    }
+
+    // fill out the map matrix with random obstacles
+    int i = 0;
+    while (i < obs) {
+        int x = rand() % (mapX - 1) + 0;
+        int y = rand() % (mapY - 1) + 0;
+
+        if (map[x][y]->type == 0) {
+            map[x][y]->setType(3);
+            obstacleArray[i]=map[x][y];
+            i++;
+        }
+    }
 
     openList.add_first(start);
-    cout << "new list created" << endl;
-    cout << openList.getList() << endl;
 
     while(openList.size>0){
         routeNode* current = openList.first;
@@ -101,34 +125,10 @@ void pathFinding(routeNode *start, routeNode *target){
     }
 }
 
-void startTrajectory(routeNode* startNode,routeNode* targetNode){
-    // get the routeList
-    pathFinding(startNode, targetNode);
-    if (routeList.size == 0) {
-        cout << "An empty routeList generated!" << endl;
-        exit(1);
-    }
-
-    cout << "Route:" << endl;
-    cout << routeList.getList() << endl << endl;
-
-    // follow the routeList on the map and display it
-    if (routeList.size > 0) {
-        routeNode *temp = routeList.first;
-        while (temp != NULL) {
-            if (temp->next == NULL) {
-
-            } else {
-                temp->type = 4;
-            }
-
-            temp = temp->next;
-        }
-    }
-
+void displayMap(){
     // display the map with the routeList
     for (int y = 0; y < mapY; y++) {
-        for (int x = 0; x < mapX; x++)
+        for (int x = 0; x < mapX; x++) {
             if (map[x][y]->type == 0)
                 cout << "\u2588";
             else if (map[x][y]->type == 3)
@@ -139,13 +139,37 @@ void startTrajectory(routeNode* startNode,routeNode* targetNode){
                 cout << "\033[1;36m\u2588\033[0m";//routeList
             else if (map[x][y]->type == 2)
                 cout << "\033[1;34m\u2593\033[0m";//targetNode with blue color
-            else if (map[x][y]->type == 5)
-                cout << "\033[1;33m\u2593\033[0m";//player with yellow color
+        }
         cout << endl;
     }
 }
 
+void startTrajectory(routeNode* startNode,routeNode* targetNode){
+    // get the routeList
+    pathFinding(startNode, targetNode);
+    if (routeList.size == 0) {
+        cout << "An empty routeList generated!" << endl;
+    }
 
+    cout << "Route:" << endl;
+    cout << routeList.getList() << endl << endl;
+
+    startNode->setType(1);
+    targetNode->setType(2);
+
+    // follow the routeList on the map and display it
+    if (routeList.size > 0) {
+        routeNode *temp = routeList.first;
+        while (temp != NULL) {
+            if (temp->next == NULL) {
+
+            } else {
+                temp->type = 4;
+            }
+            temp = temp->next;
+        }
+    }
+}
 
 int main() {
     srand(time(NULL));
@@ -169,35 +193,19 @@ int main() {
     targetNode->setType(2);
     player = startNode;
 
-    // fill out the map matrix with random obstacles
-    int i = 0;
-    while (i < obs) {
-        int x = rand() % (mapX - 1) + 0;
-        int y = rand() % (mapY - 1) + 0;
-
-        if (map[x][y]->type == 0) {
-            map[x][y]->setType(3);
-            obstacleArray[i]=map[x][y];
-            i++;
-        }
-    }
-
     cout << "Map Size (X,Y): " << mapX << "," << mapY << endl;
     cout << "Start: " << xA << "," << yA << endl;
     cout << "Finish: " << xB << "," << yB << endl;
 
     startTrajectory(startNode,targetNode);
-    /*
+    displayMap();
 
-    cout << "antes del while"<<endl;
-    while(player->xPos != targetNode->xPos && player->yPos != targetNode->yPos){
+    while(player->getPosition() != targetNode->getPosition()){
         player = routeList.first;
         startTrajectory(player,targetNode);
+        displayMap();
     }
-    cout << "despues del while"<<endl;
-     */
-
-
+    cout << "Arrived to the target node" << endl;
 
     return(0);
 }
