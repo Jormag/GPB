@@ -29,8 +29,6 @@ public:
     routeNode* returnLowestCost();
 
     void reset();
-
-
 };
 
 

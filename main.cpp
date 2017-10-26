@@ -9,7 +9,7 @@
 
 const int mapX=10; // horizontal size of the map
 const int mapY=10; // vertical size size of the map
-const int obs=10; //Number of obstacles
+const int obs=50; //Number of obstacles
 const int cStr=10;// Straight cost for movement
 const int cDiag=14;// Diagonal cost for movement
 
@@ -103,7 +103,7 @@ void pathFinding(routeNode *start, routeNode *target){
 
                     if (checkX >= 0 && checkX < mapX && checkY >= 0 && checkY < mapY) {
                         routeNode *neighbour = map[checkX][checkY];
-                        if (neighbour->type == 1 || neighbour->type == 3 || closedList.contains(neighbour)) {
+                        if (neighbour->type == 1 || closedList.contains(neighbour)) {
                             continue;
                         } else {
                             int newMovementCostToNeighbour = current->gCost + getDistance(current, neighbour);
@@ -147,8 +147,9 @@ void displayMap(){
 void startTrajectory(routeNode* startNode,routeNode* targetNode){
     // get the routeList
     pathFinding(startNode, targetNode);
-    if (routeList.size == 0) {
+    if (routeList.size == 0 && startNode!= targetNode) {
         cout << "An empty routeList generated!" << endl;
+        exit(1);
     }
 
     cout << "Route:" << endl;

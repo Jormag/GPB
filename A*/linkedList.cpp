@@ -123,7 +123,6 @@ routeNode* linkedList::getNode(int pos){
     return temp;
 }
 
-
 routeNode* linkedList::returnLowestCost() {
     routeNode* temp = first;
     routeNode* temp2 = first;

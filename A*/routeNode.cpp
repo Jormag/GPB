@@ -14,7 +14,6 @@ routeNode::routeNode() {
     gCost=0;
     hCost=0;
     type=0;
-
 }
 
 void routeNode::setPosition(int x, int y) {

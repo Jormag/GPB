@@ -27,8 +27,7 @@ public:
     string getPosition();
     int get_fCost();
     void setType(int);
-
-
+    
 };
 
 
