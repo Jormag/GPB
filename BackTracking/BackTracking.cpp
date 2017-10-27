@@ -4,6 +4,8 @@
 #include <iostream>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_native_dialog.h>
+#include <stdlib.h>
 
 using namespace std;
 #define N 7
@@ -17,7 +19,7 @@ void pr(ALLEGRO_BITMAP* image, ALLEGRO_BITMAP* asteroid, char board[N][M],ALLEGR
                 case ('#'):
                     al_draw_bitmap(image, j * 100, i * 100, 0);
                     break;
-                case ('l'):
+                case ('x'):
                     al_draw_bitmap(asteroid, j * 100, i * 100, 0);
                     break;
                 case ('F'):
@@ -73,7 +75,7 @@ bool check(char board[N][M], int x, int y,ALLEGRO_BITMAP* image, ALLEGRO_BITMAP*
             } else {
                 board[x][y] = '#';
                 pr(image,asteroid,board,bass,fondo);
-                board[x][y] = '0';
+                board[x][y] = 'a';
                 return false;
             }
         }
@@ -81,15 +83,24 @@ bool check(char board[N][M], int x, int y,ALLEGRO_BITMAP* image, ALLEGRO_BITMAP*
     return false;
 }
 
+void matriz(char board[N][M]){
+    for(int i=0;i<N;i++){
+        for(int j=0; j<M;j++){
+            board[i][j]= '0';
+        }
+
+        int y =rand()%10+1;
+        board[i][y] = 'x';
+    }
+
+    int x = rand()%7;
+    board[x][M-1]='F';
+}
+
 int main() {
-    char board[N][M] = {{'l','0','l','0','0','0','l','0','l','0'},
-                        {'l','0','l','0','0','0','0','0','l','0'},
-                        {'0','0','l','0','0','l','0','0','0','F'},
-                        {'0','l','l','0','0','l','0','l','0','0'},
-                        {'0','0','0','0','l','0','0','0','0','0'},
-                        {'0','0','l','0','0','l','0','0','l','0'},
-                        {'0','0','0','0','0','0','0','0','0','0'}
-    };
+    srand(time(NULL));
+    char board[N][M];
+
 
     int W = 1000;
     int h = 700;
@@ -133,27 +144,26 @@ int main() {
 
     /////////////
     while (!done){
-        ALLEGRO_EVENT ev;
 
-        if(ev.type == ALLEGRO_EVENT_KEY_DOWN){
-            switch(ev.keyboard.keycode){
-                case ALLEGRO_KEY_1:
-                    done = true;
-                    break;
-            }
-        }
+        matriz(board);
+
+
         if ( check(board,2,0,image,asteroid,bass,fondo) == false )
         {
             cout<<"Solution does not exist"<<endl;
             return false;
         }else{
+            char msj[] = "Encontrado!!!";
+            if(al_show_native_message_box(display,msj,msj,msj,NULL,ALLEGRO_MESSAGEBOX_OK_CANCEL)== 2){
+                return 0;
+            }
             cout<<"encontrado"<<endl;
         }
 
 
 
 
-        al_wait_for_event(event_queue, &ev);
+
     }
 
     al_destroy_bitmap(image);
