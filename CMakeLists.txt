@@ -14,7 +14,7 @@ message("LIBRARIES = ${LIBRARIES}")
 
 TARGET_LINK_LIBRARIES(GPB  ${LIBRARIES})
 
-TARGET_LINK_LIBRARIES(GPB  allegro_acodec
+TARGET_LINK_LIBRARIES(GPB allegro_acodec
         allegro_audio
         allegro_color
         allegro_dialog

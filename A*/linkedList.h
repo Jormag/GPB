@@ -7,7 +7,6 @@
 
 #include "routeNode.cpp"
 
-using namespace std;
 
 class linkedList {
 public:
@@ -21,7 +20,7 @@ public:
 
     void deleteNode(routeNode*);
 
-    string getList();
+    std::string getList();
 
     bool contains(routeNode *);
 

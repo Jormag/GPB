@@ -5,10 +5,6 @@
 #ifndef GPB_NODE_H
 #define GPB_NODE_H
 
-#include <iostream>
-#include <vector>
-
-using namespace std;
 
 class routeNode {
 public:
@@ -24,10 +20,10 @@ public:
 
     void setPosition(int, int);
     void setCost(int,int);
-    string getPosition();
+    std::string getPosition();
     int get_fCost();
-    void setType(int);
-    
+    void setType(int type);
+
 };
 
 

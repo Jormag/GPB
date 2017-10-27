@@ -4,8 +4,6 @@
 #include <sstream>
 #include "routeNode.h"
 
-using namespace std;
-
 routeNode::routeNode() {
     xPos=0;
     yPos=0;
@@ -26,9 +24,9 @@ void routeNode::setCost(int g, int h){
     this->hCost = h;
 }
 
-string routeNode::getPosition()
+std::string routeNode::getPosition()
 {
-    ostringstream os;
+    std::ostringstream os;
     os << "[" << this->xPos << "," << this->yPos << "]";
     return os.str();
 }

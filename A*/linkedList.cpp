@@ -1,12 +1,9 @@
 //
 // Created by cristian on 23/10/17.
 //
-
+#include <iostream>
 #include <sstream>
 #include "linkedList.h"
-
-
-using namespace std;
 
 // Constructor por defecto
 linkedList::linkedList()
@@ -53,7 +50,7 @@ void linkedList::deleteNode(routeNode* pos)
     routeNode* temp2 = first;
 
     if (!contains(pos)){
-        cout << "The node is not in the list" << endl;
+        std::cout << "The node is not in the list" << std::endl;
     }else {
         if (temp == pos) {
             first = temp->next;
@@ -72,17 +69,17 @@ void linkedList::deleteNode(routeNode* pos)
 
 
 // retornar la Lista
-string linkedList::getList()
+std::string linkedList::getList()
 {
     routeNode* temp = first;
-    ostringstream os;
+    std::ostringstream os;
 
     if (first == NULL) {
-        os << "" << endl;
+        os << "" << std::endl;
     } else {
         while (temp != NULL) {
             if (temp->next == NULL){
-                os << temp->getPosition() <<endl;
+                os << temp->getPosition() <<std::endl;
             }else{
                 os << temp->getPosition() << "-> ";
             }
