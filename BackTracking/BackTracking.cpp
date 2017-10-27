@@ -36,46 +36,46 @@ void pr(ALLEGRO_BITMAP* image, ALLEGRO_BITMAP* asteroid, char board[N][M],ALLEGR
 
 }
 
-
-void printSolution(char board[N][M] )
-{
+void printSolution(char matriz[N][M] ) {
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < M; j++)
-            cout<<board[i][j];
+            cout<<matriz[i][j];
         cout<<endl;
     }
     cout<<"-----------"<<endl;
 }
 
-bool check(char board[N][M], int x, int y,ALLEGRO_BITMAP* image, ALLEGRO_BITMAP* asteroid,ALLEGRO_BITMAP* bass,ALLEGRO_BITMAP* fondo){
-    printSolution(board);
+bool check(char matriz[N][M], int x, int y,ALLEGRO_BITMAP* image, ALLEGRO_BITMAP* asteroid,ALLEGRO_BITMAP* bass,ALLEGRO_BITMAP* fondo){
+    printSolution(matriz);
 
 
     if(x>=0 && x<N && y>=0 && y<M) {
-        if (board[x][y] == 'F') {
+        if (matriz[x][y] == 'F') {
+            matriz[x][y] = '#';
+            pr(image,asteroid,matriz,bass,fondo);
             return true;
         }
-        if (board[x][y] == '0' ) {
-            board[x][y] = '#';
-            pr(image,asteroid,board,bass,fondo);
-            board[x][y] = 'a';
+        if (matriz[x][y] == '0' ) {
+            matriz[x][y] = '#';
+            pr(image,asteroid,matriz,bass,fondo);
+            matriz[x][y] = 'a';
 
 
 
 
-            if (check(board, x, y + 1,image,asteroid, bass,fondo)) {
+            if (check(matriz, x, y+1,image,asteroid, bass,fondo)) {
                 return true;
-            } else if (check(board, x - 1, y,image,asteroid, bass,fondo)) {
+            } else if (check(matriz, x-1, y,image,asteroid, bass,fondo)) {
                 return true;
-            } else if (check(board, x, y - 1,image,asteroid, bass,fondo)) {
+            } else if (check(matriz, x+1, y,image,asteroid, bass,fondo)) {
                 return true;
-            } else if (check(board, x + 1, y,image,asteroid, bass, fondo)) {
+            } else if (check(matriz, x, y-1,image,asteroid, bass, fondo)) {
                 return true;
             } else {
-                board[x][y] = '#';
-                pr(image,asteroid,board,bass,fondo);
-                board[x][y] = 'a';
+                matriz[x][y] = '#';
+                pr(image,asteroid,matriz,bass,fondo);
+                matriz[x][y] = 'a';
                 return false;
             }
         }
@@ -83,31 +83,33 @@ bool check(char board[N][M], int x, int y,ALLEGRO_BITMAP* image, ALLEGRO_BITMAP*
     return false;
 }
 
-void matriz(char board[N][M]){
+void makeMatriz(char matriz[N][M]){
     for(int i=0;i<N;i++){
         for(int j=0; j<M;j++){
-            board[i][j]= '0';
+            matriz[i][j]= '0';
         }
 
-        int y =rand()%10+1;
-        board[i][y] = 'x';
+        for(int k=0;k<2;k++) {
+            int y = rand() % 10 + 1;
+            matriz[i][y] = 'x';
+        }
     }
 
     int x = rand()%7;
-    board[x][M-1]='F';
+    matriz[x][M-1]='F';
 }
 
 int main() {
-    srand(time(NULL));
-    char board[N][M];
-
-
+    srand(time(NULL));// Para el random
+    char matriz[N][M];//makeMatriz
     int W = 1000;
     int h = 700;
     bool done = false;
-
-    int imageW = 0;
-    int imageH = 0;
+    char title1[] = "Bien hecho";
+    char msj1[] = "Encontrado!!!";
+    char pregunta1[] = "¿Desea volverlo hacer?";
+    char title2[] = "Fallo!";
+    char msj2[] = "No existe Ruta";
 
     //allegro variable
     ALLEGRO_DISPLAY* display = NULL;
@@ -130,31 +132,31 @@ int main() {
     al_install_keyboard();
     al_init_image_addon();
 
+    // cargar las imágenes
     image = al_load_bitmap("/home/pedro/Escritorio/MillenniumFalcon.png");
     asteroid = al_load_bitmap("/home/pedro/Escritorio/asteroids.png");
     bass = al_load_bitmap("/home/pedro/Escritorio/Base.png");
     fondo = al_load_bitmap("/home/pedro/Escritorio/Space.png");
-    imageW = al_get_bitmap_width(image);
-    imageH = al_get_bitmap_height(image);
 
-
+    //Cola de eventos
     event_queue = al_create_event_queue();
     al_register_event_source(event_queue, al_get_keyboard_event_source());
 
 
-    /////////////
+    // Ciclo infinito
     while (!done){
 
-        matriz(board);
+        makeMatriz(matriz);
 
 
-        if ( check(board,2,0,image,asteroid,bass,fondo) == false )
-        {
+        if ( check(matriz,2,0,image,asteroid,bass,fondo) == false ){
+            if(al_show_native_message_box(display,title2,msj2,pregunta1,NULL,ALLEGRO_MESSAGEBOX_OK_CANCEL)== 2){
+                return 0;
+            }
             cout<<"Solution does not exist"<<endl;
             return false;
         }else{
-            char msj[] = "Encontrado!!!";
-            if(al_show_native_message_box(display,msj,msj,msj,NULL,ALLEGRO_MESSAGEBOX_OK_CANCEL)== 2){
+            if(al_show_native_message_box(display,title1,msj1,pregunta1,NULL,ALLEGRO_MESSAGEBOX_OK_CANCEL)== 2){
                 return 0;
             }
             cout<<"encontrado"<<endl;
