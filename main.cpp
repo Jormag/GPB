@@ -14,9 +14,11 @@
 const int mapX=10; // horizontal size of the map
 const int mapY=10; // vertical size size of the map
 const int asteroids=10; //Number of asteroids
-const int enemyShips=3; //Number of enemy ships
+const int enemyShips=5; //Number of enemy ships
+
 const int cStr=10;// Straight cost for movement
 const int cDiag=14;// Diagonal cost for movement
+
 
 static routeNode* map[mapX][mapY];
 static routeNode* asteroidsArray[asteroids];
@@ -27,7 +29,9 @@ static linkedList closedList; // map of closed (tried-out) nodes
 static linkedList openList; // map of open (not-yet-tried) nodes
 static linkedList routeList;//array of the routeList
 
+
 using namespace std;
+
 
 int getDistance(routeNode* start, routeNode* target){
     int dstX = abs(start->xPos - target->xPos);
@@ -46,27 +50,25 @@ void retracePath(routeNode* start, routeNode* target){
         routeList.add_first(current);
         current=current->parent;
     }
-
 }
 
-void pathFinding(routeNode *start, routeNode *target){
+void a_star(routeNode *start, routeNode *target){
+    //prepare the map for multiple runs of the a_star
     closedList = linkedList();
     openList = linkedList();
     routeList = linkedList();
-
-    closedList.reset();
-    openList.reset();
-    routeList.reset();
 
     for (int y = 0; y < mapY; y++) {
         for (int x = 0; x < mapX; x++) {
             map[x][y]->next = NULL;
             map[x][y]->type=0;
+            map[x][y]->parent = NULL;
         }
     }
 
     start->setType(1);
     target->setType(2);
+
     for (int i=0;i<asteroids;i++){
         asteroidsArray[i]->setType(3);
     }
@@ -74,8 +76,8 @@ void pathFinding(routeNode *start, routeNode *target){
         enemiesArray[i]->setType(4);
     }
 
+    //begin of the a_star
     openList.add_first(start);
-
     while(openList.size>0){
         routeNode* current = openList.first;
         for(int i=1;i<openList.size;i++){
@@ -147,9 +149,9 @@ void displayMap(){
     }
 }
 
-void startTrajectory(routeNode* startNode,routeNode* targetNode){
+void pathFinding(routeNode *startNode, routeNode *targetNode){
     // get the routeList
-    pathFinding(startNode, targetNode);
+    a_star(startNode, targetNode);
     if (routeList.size == 0 && startNode!= targetNode) {
         cout << "An empty routeList generated!" << endl;
         exit(1);
@@ -234,12 +236,14 @@ int main() {
     // randomly select startNode and targetNode locations
     int xA, yA, xB, yB;
     xA = 0, yA = rand() % (mapY - 1), xB = (mapX - 1), yB = rand() % (mapY - 1);
+
     //Define the startNode and targetNode nodes
     routeNode *startNode = map[xA][yA];
     startNode->setType(1);
     routeNode *targetNode = map[xB][yB];
     targetNode->setType(2);
     routeNode* player = startNode;
+
 
     // fill out the map matrix with random obstacles
     for(int i=0;i<asteroids;i++){
@@ -266,46 +270,65 @@ int main() {
             i--;
         }
     }
+    int px = startNode->xPos*100;
+    int py = startNode->yPos*100;
+    bool inPos = true;
+    while((targetNode->parent)!=player || inPos!= true){
+        if (inPos == true) {
+            if (routeList.size == 0) {
+                player = startNode;
+            } else {
+                player = routeList.first;
+            }
+            pathFinding(player, targetNode);
+            displayMap();
+        }
+        if(px > player->xPos*100){
+            inPos = false;
+            px-=5;
+        }
+        if(px < player->xPos*100){
+            inPos = false;
+            px+=5;
+        }
 
-    startTrajectory(startNode,targetNode);
-    displayMap();
-    al_draw_bitmap(background,0,0,0);
-    al_draw_bitmap(playerImage,(startNode->xPos)*100, (startNode->yPos)*100,0);
-    al_draw_bitmap(base,(targetNode->xPos)*100, (targetNode->yPos)*100,0);
-    for(int i=0;i<asteroids;i++){
-        al_draw_bitmap(asteroidsImages[i],(asteroidsArray[i]->xPos)*100,(asteroidsArray[i]->yPos)*100,0);
-    }
-    for(int i=0;i<enemyShips;i++){
-        al_draw_bitmap(enemiesImages[i],(enemiesArray[i]->xPos)*100,(enemiesArray[i]->yPos)*100,0);
-    }
-    al_flip_display();
-    al_clear_to_color(black);
-    al_rest(5);
+        if(py > player->yPos*100){
+            inPos = false;
+            py-=5;
+        }
+        if (py < player->yPos*100){
+            inPos = false;
+            py+=5;
+        }
+        if (px == player->xPos*100 && py == player->yPos*100){
+            inPos = true;
+        }
 
-    //while(player->getPosition() != targetNode->getPosition()){
-    while(targetNode->parent!= player){
-        player = routeList.first;
-        startTrajectory(player,targetNode);
-        displayMap();
         al_draw_bitmap(background,0,0,0);
-        al_draw_bitmap(playerImage,(player->xPos)*100, (player->yPos)*100,0);
+
+        //al_draw_bitmap(playerImage,(player->xPos)*100, (player->yPos)*100,0);
+        al_draw_bitmap(playerImage,px+20/2, py+20/2,0);
+
         al_draw_bitmap(base,(targetNode->xPos)*100, (targetNode->yPos)*100,0);
         for(int i=0;i<asteroids;i++){
-            al_draw_bitmap(asteroidsImages[i],(asteroidsArray[i]->xPos)*100,(asteroidsArray[i]->yPos)*100,0);
+            al_draw_bitmap(asteroidsImages[i],(asteroidsArray[i]->xPos)*100+20/2,(asteroidsArray[i]->yPos)*100+20/2,0);
         }
         for(int i=0;i<enemyShips;i++){
-            al_draw_bitmap(enemiesImages[i],(enemiesArray[i]->xPos)*100,(enemiesArray[i]->yPos)*100,0);
+            al_draw_bitmap(enemiesImages[i],(enemiesArray[i]->xPos)*100+20/2,(enemiesArray[i]->yPos)*100+20/2,0);
         }
         al_flip_display();
         al_clear_to_color(black);
-        al_rest(5);
+        al_rest(0.1);
+
     }
+    al_show_native_message_box(display,"Program State", "Successful","The Millennium Falcon arrived to the rebel base",NULL,ALLEGRO_MESSAGEBOX_WARN);
     cout << "Arrived to the target node" << endl;
 
     al_destroy_event_queue(event_queue);
     al_destroy_bitmap(playerImage);
     al_destroy_bitmap(background);
     al_destroy_display(display);
+
     for(int i=0;i<asteroids;i++){
         al_destroy_bitmap(asteroidsImages[i]);
     }

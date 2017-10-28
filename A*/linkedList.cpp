@@ -136,8 +136,4 @@ routeNode* linkedList::returnLowestCost() {
     }
     return temp2;
 }
-void linkedList::reset(){
-    this->size = 0;
-    this->first = NULL;
-}
 
