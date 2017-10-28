@@ -22,7 +22,7 @@ void printSolution(int board[N][N])
    be placed on board[row][col]. Note that this
    function is called when "col" queens are
    already placed in columns from 0 to col -1.
-   So we need to check only left side for
+   So we need to backTracking only left side for
    attacking queens */
 bool isSafe(int board[N][N], int row, int col)
 {

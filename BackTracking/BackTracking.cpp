@@ -11,7 +11,15 @@
 using namespace std;
 #define N 7
 #define M 10
-
+/**
+ * Grafica la matriz
+ * @param image
+ * @param asteroid
+ * @param board
+ * @param bass
+ * @param fondo
+ * @param final
+ */
 void pr(ALLEGRO_BITMAP* image, ALLEGRO_BITMAP* asteroid, char board[N][M],ALLEGRO_BITMAP* bass,ALLEGRO_BITMAP* fondo,bool final) {
     al_draw_bitmap(fondo,0,0,0);
     for (int i = 0; i < 7; i++) {
@@ -41,7 +49,10 @@ void pr(ALLEGRO_BITMAP* image, ALLEGRO_BITMAP* asteroid, char board[N][M],ALLEGR
     al_clear_to_color(al_map_rgb(0,0,0));
 
 }
-
+/**
+ * Imprime los cambios de la matriz en consola
+ * @param matriz
+ */
 void printSolution(char matriz[N][M] ) {
     for (int i = 0; i < N; i++)
     {
@@ -51,7 +62,17 @@ void printSolution(char matriz[N][M] ) {
     }
     cout<<"-----------"<<endl;
 }
-
+/**
+ * Método recursivo para hacer backtracking
+ * @param matriz
+ * @param x
+ * @param y
+ * @param image
+ * @param asteroid
+ * @param bass
+ * @param fondo
+ * @return
+ */
 bool backTracking(char matriz[N][M], int x, int y, ALLEGRO_BITMAP *image, ALLEGRO_BITMAP *asteroid, ALLEGRO_BITMAP *bass,
                   ALLEGRO_BITMAP *fondo){
     printSolution(matriz);
@@ -89,7 +110,10 @@ bool backTracking(char matriz[N][M], int x, int y, ALLEGRO_BITMAP *image, ALLEGR
     }
     return false;
 }
-
+/**
+ * Crea la matriz e ingresa el final y los asteroides aleatoriamente
+ * @param matriz
+ */
 void makeMatriz(char matriz[N][M]){
     for(int i=0;i<N;i++){
         for(int j=0; j<M;j++){
@@ -105,7 +129,10 @@ void makeMatriz(char matriz[N][M]){
     int x = rand()%7;
     matriz[x][M-1]='F';
 }
-
+/**
+ *
+ * @return
+ */
 int main() {
     srand(time(NULL));// Para el random
     char matriz[N][M];//makeMatriz
