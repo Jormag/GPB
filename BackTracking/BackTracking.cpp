@@ -52,7 +52,8 @@ void printSolution(char matriz[N][M] ) {
     cout<<"-----------"<<endl;
 }
 
-bool check(char matriz[N][M], int x, int y,ALLEGRO_BITMAP* image, ALLEGRO_BITMAP* asteroid,ALLEGRO_BITMAP* bass,ALLEGRO_BITMAP* fondo){
+bool backTracking(char matriz[N][M], int x, int y, ALLEGRO_BITMAP *image, ALLEGRO_BITMAP *asteroid, ALLEGRO_BITMAP *bass,
+                  ALLEGRO_BITMAP *fondo){
     printSolution(matriz);
 
 
@@ -70,13 +71,13 @@ bool check(char matriz[N][M], int x, int y,ALLEGRO_BITMAP* image, ALLEGRO_BITMAP
 
 
 
-            if (check(matriz, x, y+1,image,asteroid, bass,fondo)) {
+            if (backTracking(matriz, x, y + 1, image, asteroid, bass, fondo)) {
                 return true;
-            } else if (check(matriz, x-1, y,image,asteroid, bass,fondo)) {
+            } else if (backTracking(matriz, x - 1, y, image, asteroid, bass, fondo)) {
                 return true;
-            } else if (check(matriz, x+1, y,image,asteroid, bass,fondo)) {
+            } else if (backTracking(matriz, x + 1, y, image, asteroid, bass, fondo)) {
                 return true;
-            } else if (check(matriz, x, y-1,image,asteroid, bass, fondo)) {
+            } else if (backTracking(matriz, x, y - 1, image, asteroid, bass, fondo)) {
                 return true;
             } else {
                 matriz[x][y] = '#';
@@ -157,7 +158,7 @@ int main() {
         makeMatriz(matriz);
 
 
-        if ( check(matriz,2,0,image,asteroid,bass,fondo) == false ){
+        if (backTracking(matriz, 2, 0, image, asteroid, bass, fondo) == false ){
             if(al_show_native_message_box(display,title2,msj2,pregunta1,NULL,ALLEGRO_MESSAGEBOX_OK_CANCEL)== 2){
                 return 0;
             }
