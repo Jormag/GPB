@@ -5,13 +5,14 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_native_dialog.h>
+#include <allegro5/allegro_primitives.h>
 #include <stdlib.h>
 
 using namespace std;
 #define N 7
 #define M 10
 
-void pr(ALLEGRO_BITMAP* image, ALLEGRO_BITMAP* asteroid, char board[N][M],ALLEGRO_BITMAP* bass,ALLEGRO_BITMAP* fondo) {
+void pr(ALLEGRO_BITMAP* image, ALLEGRO_BITMAP* asteroid, char board[N][M],ALLEGRO_BITMAP* bass,ALLEGRO_BITMAP* fondo,bool final) {
     al_draw_bitmap(fondo,0,0,0);
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 10; j++) {
@@ -25,6 +26,11 @@ void pr(ALLEGRO_BITMAP* image, ALLEGRO_BITMAP* asteroid, char board[N][M],ALLEGR
                 case ('F'):
                     al_draw_bitmap(bass, j * 100, i * 100, 0);
                     break;
+                case('o'):
+                    if(final)
+                        al_draw_filled_circle((j*100)+50,(i*100)+50,5,al_map_rgb(0,0,255));
+                    break;
+
 
             }
         }
@@ -53,13 +59,13 @@ bool check(char matriz[N][M], int x, int y,ALLEGRO_BITMAP* image, ALLEGRO_BITMAP
     if(x>=0 && x<N && y>=0 && y<M) {
         if (matriz[x][y] == 'F') {
             matriz[x][y] = '#';
-            pr(image,asteroid,matriz,bass,fondo);
+            pr(image,asteroid,matriz,bass,fondo,false);
             return true;
         }
         if (matriz[x][y] == '0' ) {
             matriz[x][y] = '#';
-            pr(image,asteroid,matriz,bass,fondo);
-            matriz[x][y] = 'a';
+            pr(image,asteroid,matriz,bass,fondo, false);
+            matriz[x][y] = 'o';
 
 
 
@@ -74,7 +80,7 @@ bool check(char matriz[N][M], int x, int y,ALLEGRO_BITMAP* image, ALLEGRO_BITMAP
                 return true;
             } else {
                 matriz[x][y] = '#';
-                pr(image,asteroid,matriz,bass,fondo);
+                pr(image,asteroid,matriz,bass,fondo, false);
                 matriz[x][y] = 'a';
                 return false;
             }
@@ -131,6 +137,8 @@ int main() {
     //addon init
     al_install_keyboard();
     al_init_image_addon();
+    al_init_primitives_addon();
+
 
     // cargar las imágenes
     image = al_load_bitmap("/home/pedro/Escritorio/MillenniumFalcon.png");
@@ -154,8 +162,9 @@ int main() {
                 return 0;
             }
             cout<<"Solution does not exist"<<endl;
-            return false;
+
         }else{
+            pr(image,asteroid,matriz,bass,fondo, true);
             if(al_show_native_message_box(display,title1,msj1,pregunta1,NULL,ALLEGRO_MESSAGEBOX_OK_CANCEL)== 2){
                 return 0;
             }
