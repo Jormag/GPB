@@ -32,7 +32,14 @@ static linkedList routeList;//array of the routeList
 
 using namespace std;
 
-
+/**
+ *
+ * @param start
+ * @param target
+ * calculate the h_cost depending of the movements between the start pos and the target pos and
+ * take the low value and multiply it for the diagonal cost and addition the multiply of the straight cost and the difference of the distances
+ * @return the h_cost
+ */
 int getDistance(routeNode* start, routeNode* target){
     int dstX = abs(start->xPos - target->xPos);
     int dstY = abs(start->yPos - target->yPos);
@@ -42,7 +49,12 @@ int getDistance(routeNode* start, routeNode* target){
 
     return (cDiag*dstX + cStr*(dstY-dstX));
 }
-
+/**
+ *
+ * @param start
+ * @param target
+ * Asign the parent nodes of the routeList
+ */
 void retracePath(routeNode* start, routeNode* target){
     routeNode* current = target;
 
@@ -51,7 +63,14 @@ void retracePath(routeNode* start, routeNode* target){
         current=current->parent;
     }
 }
-
+/**
+ *
+ * @param start
+ * @param target
+ * first prepare the map for multiple runs of the a_star
+ * next calculate the cost of the neightbours node and add then to the open list if is a valid node
+ * when find the target node stops the function
+ */
 void a_star(routeNode *start, routeNode *target){
     //prepare the map for multiple runs of the a_star
     closedList = linkedList();
@@ -66,15 +85,31 @@ void a_star(routeNode *start, routeNode *target){
         }
     }
 
+
     start->setType(1);
     target->setType(2);
+
+    for (int i=0;i<enemyShips;i++){
+        enemiesArray[i]->setType(4);
+    }
+
+    // fill out the map matrix with random obstacles
+    for(int i=0;i<asteroids;i++){
+        int x = rand()% (mapX - 1) + 0;
+        int y = rand()% (mapY - 1) + 0;
+
+        if (map[x][y]->type == 0) {
+            map[x][y]->setType(3);
+            asteroidsArray[i]=map[x][y];
+        }else{
+            i--;
+        }
+    }
 
     for (int i=0;i<asteroids;i++){
         asteroidsArray[i]->setType(3);
     }
-    for (int i=0;i<enemyShips;i++){
-        enemiesArray[i]->setType(4);
-    }
+
 
     //begin of the a_star
     openList.add_first(start);
@@ -127,7 +162,9 @@ void a_star(routeNode *start, routeNode *target){
         }
     }
 }
-
+/**
+ * Displays the map on console
+ */
 void displayMap(){
     // display the map with the routeList
     for (int y = 0; y < mapY; y++) {
@@ -149,6 +186,13 @@ void displayMap(){
     }
 }
 
+/**
+ *
+ * @param startNode
+ * @param targetNode
+ * does a call to the funtion a_star and calculate the routelist to the targetNode
+ * follows the route list and asign the node as a routeNode
+ */
 void pathFinding(routeNode *startNode, routeNode *targetNode){
     // get the routeList
     a_star(startNode, targetNode);
@@ -270,10 +314,11 @@ int main() {
             i--;
         }
     }
+
     int px = startNode->xPos*100;
     int py = startNode->yPos*100;
     bool inPos = true;
-    while((targetNode->parent)!=player || inPos!= true){
+    while(targetNode->parent!=player || inPos!= true){
         if (inPos == true) {
             if (routeList.size == 0) {
                 player = startNode;
